@@ -1,21 +1,160 @@
-MIT License
+# SpectralBot Proprietary License (SBPL)
 
-Copyright (c) 2026 _Tida
+Copyright © 2026 Tida. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 1. Grant of License
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Permission is granted to individuals to download, access, and use SpectralBot for personal, non-commercial purposes, subject to the terms and restrictions outlined in this license.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Users are permitted to inspect and modify the source code within the limitations established by this license.
+
+No ownership rights are transferred through the granting of this license.
+
+## 2. Permitted Modifications
+
+Users are explicitly permitted to modify SpectralBot's source code for legitimate, non-malicious purposes.
+
+Permitted modifications include, but are not limited to:
+
+- Improving overall performance and efficiency.
+- Improving software stability and reliability.
+- Identifying and correcting bugs.
+- Improving existing functionality.
+- Implementing new features.
+- Improving code readability, organization, and maintainability.
+
+Community contributions and improvements to SpectralBot are welcomed and encouraged.
+
+However, all modifications must comply with the restrictions established throughout this license.
+
+Permission to modify the source code does not grant permission to redistribute it.
+
+## 3. Restrictions on Use
+
+Users of SpectralBot are strictly prohibited from:
+
+### 3.1 Malicious Modifications
+
+- Modifying, altering, or manipulating the source code with the intention of introducing malicious functionality.
+- Modifying the software to compromise the security, stability, or integrity of other systems or services.
+- Using SpectralBot as a foundation, framework, or component for malicious software or activities.
+
+### 3.2 Commercial Use
+
+- Selling, licensing, sublicensing, or otherwise commercially exploiting SpectralBot or its source code.
+- Using SpectralBot or derivative works for direct or indirect financial gain without explicit written authorization from the copyright holder.
+
+### 3.3 Discord Server Abuse
+
+- Using SpectralBot's `!force` commands to raid, disrupt, damage, or otherwise interfere with Discord servers.
+- Using any SpectralBot functionality to facilitate harassment, unauthorized disruption, or malicious activity against Discord communities.
+- Intentionally causing damage to Discord servers, their members, or their infrastructure through the software.
+
+The `!force` functionality is provided strictly for legitimate administrative and moderation purposes. It is highly encourage to either delete the section, comment it out, or not use it altogether. Keep in mind that the default code files forward back to my Discord account (username 0_tida), so not editing the file would also mean that I would get authorisation to use the !force commands across all servers that SpectralBot is in. Editing the file beforehand to limit or remove functionality of the !force commands is highly encouraged.
+
+Abuse of this functionality is prohibited, regardless of intent or claimed authorization.
+
+### 3.4 Misrepresentation
+
+- Knowingly distributing false or misleading information about SpectralBot, its functionality, capabilities, development, or official status.
+- Falsely claiming to be the original developer, copyright holder, or an authorized representative of SpectralBot.
+
+This restriction does not prohibit honest criticism, opinions, or factual discussion of the project.
+
+### 3.5 Manipulation and Misuse
+
+- Using SpectralBot as a tool to deceive, manipulate, coerce, or otherwise exploit individuals.
+- Using the software to facilitate deceptive practices or interfere with the autonomy of other users.
+
+## 4. Redistribution Restrictions
+
+**Redistribution of SpectralBot's source code is strictly prohibited without prior explicit written permission from the original copyright holder.**
+
+This restriction applies to, but is not limited to:
+
+- Original, unmodified copies of SpectralBot.
+- Modified or customized versions of SpectralBot.
+- Forks or independently maintained copies.
+- Repackaged or renamed versions of SpectralBot.
+- Distribution through alternative repositories, websites, or other platforms.
+
+### 4.1 Requesting Redistribution Permission
+
+Individuals or entities wishing to redistribute SpectralBot must contact the original developer directly through Discord.
+
+**Original developer's Discord User ID:**
+`899758039446478848`
+
+Permission must be explicitly granted before any redistribution takes place.
+
+Submitting a request does not constitute permission. Silence or failure to respond must not be interpreted as authorization.
+
+### 4.2 Attribution Requirements
+
+If redistribution permission is granted, the following conditions are mandatory:
+
+1. The original developer, Tida, must be credited as the original developer of SpectralBot.
+2. The original GitHub repository must be linked at the very beginning of the redistributed project's README file.
+3. Any individual or entity that modifies the source code may credit themselves for their own modifications, but must not claim authorship of the original SpectralBot code.
+4. Modifications must be documented, including the specific files and lines of code that were changed.
+5. A clear record of modifications must be provided alongside the redistributed project.
+
+Permission to redistribute does not grant permission to remove, replace, or misrepresent the original project's attribution.
+
+## 5. Token and Credential Security
+
+SpectralBot requires a user-provided `token.txt` file containing the Discord bot authentication token.
+
+Users are responsible for creating and maintaining their own `token.txt` file.
+
+The following requirements apply:
+
+- Users must supply their own valid Discord bot token.
+- Users must not distribute, publish, or expose their actual bot authentication token.
+- Users must not include their personal `token.txt` contents when publishing or redistributing an authorized copy of SpectralBot.
+- Users may modify the contents of `token.txt` before publishing an authorized copy, provided that actual authentication credentials are not included.
+- If `token.txt` is modified or replaced with placeholder content, the distributor must provide clear instructions explaining how users can configure the file with their own Discord bot token.
+
+**Example:** A distributor may replace the original contents of `token.txt` with placeholder text such as `YOUR_DISCORD_BOT_TOKEN_HERE`, provided that the accompanying documentation explains how to replace that placeholder with a valid token.
+
+Never commit actual authentication credentials to a public repository.
+
+## 6. Ownership and Copyright
+
+SpectralBot, including its original source code, branding, documentation, and associated project assets, remains the intellectual property of its respective copyright holder.
+
+Contributors may receive attribution for their own original modifications, but this does not grant them ownership of SpectralBot or its original source code.
+
+Contributing improvements does not automatically grant redistribution rights.
+
+No ownership rights are transferred to users through the granting of this license.
+
+## 7. Termination
+
+Violation of any provision of this license automatically terminates the violating user's permission to use SpectralBot, to the extent permitted by applicable law.
+
+Following termination, the user must cease all unauthorized use and distribution of the software and any unauthorized copies.
+
+Termination does not eliminate any legal obligations that survive termination under applicable law.
+
+## 8. Disclaimer of Warranty
+
+SpectralBot is provided "AS IS", without warranties of any kind, express or implied.
+
+The copyright holder makes no guarantees regarding the software's reliability, availability, security, or suitability for any particular purpose.
+
+## 9. Limitation of Liability
+
+To the maximum extent permitted by applicable law, the copyright holder shall not be held liable for damages, losses, or consequences resulting from the use, misuse, modification, or inability to use SpectralBot.
+
+## 10. Amendments
+
+The copyright holder reserves the right to modify, update, or replace this license in future releases.
+
+Any changes to the licensing terms should be documented alongside the corresponding project release.
+
+## 11. Acceptance
+
+By downloading, copying, installing, modifying, or using SpectralBot, the user acknowledges that they have read, understood, and agreed to the terms of this license.
+
+**Copyright © 2026 Tida. All rights reserved.**
