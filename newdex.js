@@ -2033,7 +2033,7 @@ if (command === "restartbot") {
       const lines = Object.entries(EMOJI_LIST).map(([name, emoji]) => `**${name}** — ${emoji}`);
       const embed = new EmbedBuilder()
         .setTitle("SpectralBot Emoji List")
-        .setDescription(lines.join("\\n"))
+        .setDescription(lines.join("\n"))
         .setColor(COLORS.primary)
         .setFooter({ text: `${lines.length} configured custom emoji(s)` });
       return message.reply({ embeds: [embed] });
