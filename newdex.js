@@ -1983,6 +1983,51 @@ if (command === "restartbot") {
     }
 
 
+    if (command === "debug") {
+      if (!isOwner(message.author)) {
+        return safeReply(message, `${EMOJIS.error} This command is only for the bot developer.`);
+      }
+      const started = Date.now();
+      try {
+        const info = await getHostInfo();
+        const embed = new EmbedBuilder()
+          .setTitle("SpectralBot Debug Information")
+          .setDescription("Host information and Discord connectivity diagnostics")
+          .setColor(COLORS.primary)
+          .addFields(
+            { name: "Operating System", value: info.os, inline: true },
+            { name: "Kernel", value: info.kernel, inline: true },
+            { name: "CPU", value: info.cpu, inline: false },
+            { name: "Memory", value: info.memory, inline: true },
+            { name: "CPU Usage", value: info.cpuUsage, inline: true },
+            { name: "Uptime", value: info.uptime, inline: true },
+            { name: "Desktop", value: info.desktop, inline: true },
+            { name: "Gateway Latency", value: `${Math.round(client.ws.ping)} ms`, inline: true },
+            { name: "Command Processing", value: `${Date.now() - started} ms`, inline: true }
+          )
+          .setFooter({ text: "SpectralBot • Debug" })
+          .setTimestamp();
+        return message.reply({ embeds: [embed] });
+      } catch (error) {
+        console.error("DEBUG ERROR:", error);
+        return safeReply(message, `${EMOJIS.error} Failed to retrieve debug information. Check the SpectralBot console.`);
+      }
+    }
+
+    if (command === "emojilist") {
+      const lines = Object.entries(EMOJIS).map(([name, emoji]) => `**${name}** — ${emoji}`);
+      const embed = new EmbedBuilder()
+        .setTitle("SpectralBot Emoji List")
+        .setDescription(lines.join("\\n"))
+        .setColor(COLORS.primary)
+        .setFooter({ text: `${lines.length} configured custom emoji(s)` });
+      return message.reply({ embeds: [embed] });
+    }
+
+    if (command === "botdevping") {
+      return handleBotDevPingMessage(message);
+    }
+
     if (
       command ===
       "help"
@@ -3321,6 +3366,29 @@ async function handleEmojiList(interaction) {
 }
 
 const botDevPingCooldowns = new Map();
+
+async function handleBotDevPingMessage(message) {
+  const previous = botDevPingCooldowns.get(message.author.id) || 0;
+  const remaining = 10 * 60 * 1000 - (Date.now() - previous);
+  if (remaining > 0) {
+    return safeReply(message, `${EMOJIS.warning} Please wait ${Math.ceil(remaining / 60000)} minute(s) before requesting developer assistance again.`);
+  }
+  const embed = new EmbedBuilder()
+    .setTitle("Request SpectralBot Developer Assistance?")
+    .setDescription("This will alert the SpectralBot developer and send them an invitation to this server. **Only continue if your server's staff have already tried and cannot resolve the issue.**")
+    .addFields(
+      { name: "Server", value: message.guild.name, inline: true },
+      { name: "Requester", value: `${message.author.tag} (<@${message.author.id}>)`, inline: true },
+      { name: "What happens next?", value: "If confirmed, SpectralBot will mention the developer in this channel and privately send them a single-use server invitation." }
+    )
+    .setColor(COLORS.warning)
+    .setFooter({ text: "Please confirm only when staff cannot resolve the issue." });
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId(`botdevping_confirm:${message.author.id}`).setLabel("Confirm request").setStyle(ButtonStyle.Danger),
+    new ButtonBuilder().setCustomId(`botdevping_cancel:${message.author.id}`).setLabel("Cancel").setStyle(ButtonStyle.Secondary)
+  );
+  return message.reply({ embeds: [embed], components: [row] });
+}
 
 async function handleBotDevPing(interaction) {
   const previous = botDevPingCooldowns.get(interaction.user.id) || 0;
