@@ -113,11 +113,26 @@ const COLORS = {
 };
 
 
+const EMOJI_LIST = {
+  HYPR: "<:HYPR:1560796747935252591>",
+  loadAnim: "<a:loadAnim:1560164718730158090>",
+  developerBadge: "<:developerBadge:1560164716419219516>",
+  SBR: "<:SBR:1480415714732015769>",
+  SBL: "<:SBL:1480415712064569465>",
+  SBD: "<:SBD:1480415709753249835>",
+  SBU: "<:SBU:1480415707572207777>",
+  SBSuccess: "<:SBSuccess:1480415704225288326>",
+  SBFail: "<:SBFail:1480415701650112582>",
+  SBHexxi: "<:SBHexxi:1480415699984847000>",
+  SBRainboltSpectral: "<:SBRainboltSpectral:1480415698546200779>",
+  SBErr: "<:SBErr:1480415697275195444>"
+};
+
 const EMOJIS = {
-  success: "<:SBSuccess:1480415704225288326>",
-  error: "<:SBFail:1480415701650112582>",
-  warning: "<:SBErr:1480415697275195444>",
-  mute: "<:SBD:1480415709753249835>"
+  success: EMOJI_LIST.SBSuccess,
+  error: EMOJI_LIST.SBFail,
+  warning: EMOJI_LIST.SBErr,
+  mute: EMOJI_LIST.SBD
 };
 
 
@@ -2015,7 +2030,7 @@ if (command === "restartbot") {
     }
 
     if (command === "emojilist") {
-      const lines = Object.entries(EMOJIS).map(([name, emoji]) => `**${name}** — ${emoji}`);
+      const lines = Object.entries(EMOJI_LIST).map(([name, emoji]) => `**${name}** — ${emoji}`);
       const embed = new EmbedBuilder()
         .setTitle("SpectralBot Emoji List")
         .setDescription(lines.join("\\n"))
@@ -3359,7 +3374,7 @@ async function handleDebugCommand(interaction) {
 }
 
 async function handleEmojiList(interaction) {
-  const lines = Object.entries(EMOJIS).map(([name, emoji]) => `**${name}** — ${emoji}`);
+  const lines = Object.entries(EMOJI_LIST).map(([name, emoji]) => `**${name}** — ${emoji}`);
   const embed = new EmbedBuilder().setTitle("SpectralBot Emoji List").setDescription(lines.join("\n"))
     .setColor(COLORS.primary).setFooter({ text: `${lines.length} configured custom emoji(s)` });
   return interaction.reply({ embeds: [embed] });
