@@ -3249,66 +3249,169 @@ if (command === "restartbot") {
 
 async function registerSlashCommands() {
   const commands = [
-    new SlashCommandBuilder()
-      .setName(
-        "ping"
-      )
-      .setDescription(
-        "Check whether SpectralBot is online."
-      ),
+    new SlashCommandBuilder().setName("ping").setDescription("Check whether SpectralBot is online."),
+    new SlashCommandBuilder().setName("help").setDescription("Show SpectralBot commands."),
+    new SlashCommandBuilder().setName("apply").setDescription("Start an NFLBLC application."),
+    new SlashCommandBuilder().setName("hostinf").setDescription("Show host information (developer only)."),
+    new SlashCommandBuilder().setName("debug").setDescription("Show host information and bot latency (developer only)."),
+    new SlashCommandBuilder().setName("emojilist").setDescription("List the custom emojis configured in SpectralBot."),
+    new SlashCommandBuilder().setName("botdevping").setDescription("Request developer assistance when staff cannot resolve an issue."),
+    new SlashCommandBuilder().setName("ban").setDescription("Ban a member.").addUserOption(o => o.setName("user").setDescription("Member to ban").setRequired(true)).addStringOption(o => o.setName("reason").setDescription("Reason for the ban")),
+    new SlashCommandBuilder().setName("kick").setDescription("Kick a member.").addUserOption(o => o.setName("user").setDescription("Member to kick").setRequired(true)).addStringOption(o => o.setName("reason").setDescription("Reason for the kick")),
+    new SlashCommandBuilder().setName("mute").setDescription("Timeout a member for 60 seconds.").addUserOption(o => o.setName("user").setDescription("Member to timeout").setRequired(true)),
+    new SlashCommandBuilder().setName("flag").setDescription("Assign the Flagged role to a member.").addUserOption(o => o.setName("user").setDescription("Member to flag").setRequired(true)).addStringOption(o => o.setName("reason").setDescription("Reason for flagging")),
+    new SlashCommandBuilder().setName("unflag").setDescription("Remove the Flagged role from a member.").addUserOption(o => o.setName("user").setDescription("Member to unflag").setRequired(true)),
+    new SlashCommandBuilder().setName("announce").setDescription("Post an announcement in this channel.").addStringOption(o => o.setName("message").setDescription("Announcement text").setRequired(true)),
+    new SlashCommandBuilder().setName("forceban").setDescription("Force-ban a member (developer only).").addUserOption(o => o.setName("user").setDescription("Member to ban").setRequired(true)).addStringOption(o => o.setName("reason").setDescription("Reason")),
+    new SlashCommandBuilder().setName("forcekick").setDescription("Force-kick a member (developer only).").addUserOption(o => o.setName("user").setDescription("Member to kick").setRequired(true)).addStringOption(o => o.setName("reason").setDescription("Reason")),
+    new SlashCommandBuilder().setName("forcemute").setDescription("Force-timeout a member (developer only).").addUserOption(o => o.setName("user").setDescription("Member to timeout").setRequired(true)).addIntegerOption(o => o.setName("duration").setDescription("Timeout duration in milliseconds")).addStringOption(o => o.setName("reason").setDescription("Reason")),
+    new SlashCommandBuilder().setName("forceannounce").setDescription("Post an announcement in a selected channel (developer only).").addChannelOption(o => o.setName("channel").setDescription("Destination channel").setRequired(true).addChannelTypes(ChannelType.GuildText)).addStringOption(o => o.setName("message").setDescription("Announcement text").setRequired(true)),
+    new SlashCommandBuilder().setName("globalannounce").setDescription("Post a global announcement (developer only).").addChannelOption(o => o.setName("channel").setDescription("Announcement channel reference").setRequired(true).addChannelTypes(ChannelType.GuildText)).addStringOption(o => o.setName("message").setDescription("Announcement text").setRequired(true)),
+    new SlashCommandBuilder().setName("forceviewlogs").setDescription("DM SpectralBot logs to the developer."),
+    new SlashCommandBuilder().setName("killbot").setDescription("Shut down SpectralBot (developer only)."),
+    new SlashCommandBuilder().setName("restartbot").setDescription("Restart SpectralBot (developer only)."),
+    new SlashCommandBuilder().setName("config").setDescription("Configure SpectralBot for this server.")
+      .addSubcommand(s => s.setName("status").setDescription("Show the current server configuration."))
+      .addSubcommand(s => s.setName("flags").setDescription("Enable or disable the flag system.").addStringOption(o => o.setName("state").setDescription("New flag-system state").setRequired(true).addChoices({name:"Enable",value:"enable"},{name:"Disable",value:"disable"})))
+      .addSubcommand(s => s.setName("command").setDescription("Enable or disable a command.").addStringOption(o => o.setName("command").setDescription("Command name without the prefix").setRequired(true)).addStringOption(o => o.setName("state").setDescription("Whether to enable or disable it").setRequired(true).addChoices({name:"Enable",value:"enable"},{name:"Disable",value:"disable"})))
+  ].map(command => command.toJSON());
 
-    new SlashCommandBuilder()
-      .setName(
-        "apply"
-      )
-      .setDescription(
-        "Start an NFLBLC application."
-      )
-  ].map(
-    command =>
-      command.toJSON()
-  );
-
-  const rest =
-    new REST({
-      version:
-        "10"
-    }).setToken(
-      TOKEN
-    );
-
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
   try {
-    console.log(
-      "Registering application commands..."
-    );
-
-    await rest.put(
-      Routes.applicationCommands(
-        CLIENT_ID
-      ),
-      {
-        body:
-          commands
-      }
-    );
-
-    console.log(
-      "Application commands registered successfully."
-    );
-  } catch (
-    error
-  ) {
-    console.error(
-      "Failed to register application commands:",
-      error
-    );
+    console.log("Registering application commands...");
+    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+    console.log("Application commands registered successfully.");
+  } catch (error) {
+    console.error("Failed to register application commands:", error);
   }
 }
+
+async function handleDebugCommand(interaction) {
+  if (!isOwner(interaction.user)) return interaction.reply({ content: `${EMOJIS.error} This command is only for the bot developer.`, ephemeral: true });
+  const started = Date.now();
+  await interaction.deferReply();
+  try {
+    const info = await getHostInfo();
+    const responseLatency = Date.now() - started;
+    const embed = new EmbedBuilder().setTitle("SpectralBot Debug Information")
+      .setDescription("Host information and Discord connectivity diagnostics").setColor(COLORS.primary)
+      .addFields(
+        { name: "Operating System", value: info.os, inline: true },
+        { name: "Kernel", value: info.kernel, inline: true },
+        { name: "CPU", value: info.cpu, inline: false },
+        { name: "Memory", value: info.memory, inline: true },
+        { name: "CPU Usage", value: info.cpuUsage, inline: true },
+        { name: "Uptime", value: info.uptime, inline: true },
+        { name: "Desktop", value: info.desktop, inline: true },
+        { name: "Gateway Latency", value: `${Math.round(client.ws.ping)} ms`, inline: true },
+        { name: "Interaction Response", value: `${responseLatency} ms`, inline: true }
+      ).setFooter({ text: "SpectralBot • Debug" }).setTimestamp();
+    await interaction.editReply({ embeds: [embed] });
+  } catch (error) {
+    console.error("DEBUG ERROR:", error);
+    await interaction.editReply({ content: `${EMOJIS.error} Failed to retrieve debug information. Check the SpectralBot console.` });
+  }
+}
+
+async function handleEmojiList(interaction) {
+  const lines = Object.entries(EMOJIS).map(([name, emoji]) => `**${name}** — ${emoji}`);
+  const embed = new EmbedBuilder().setTitle("SpectralBot Emoji List").setDescription(lines.join("\n"))
+    .setColor(COLORS.primary).setFooter({ text: `${lines.length} configured custom emoji(s)` });
+  return interaction.reply({ embeds: [embed] });
+}
+
+const botDevPingCooldowns = new Map();
+
+async function handleBotDevPing(interaction) {
+  const previous = botDevPingCooldowns.get(interaction.user.id) || 0;
+  const remaining = 10 * 60 * 1000 - (Date.now() - previous);
+  if (remaining > 0) return interaction.reply({ content: `${EMOJIS.warning} Please wait ${Math.ceil(remaining / 60000)} minute(s) before requesting developer assistance again.`, ephemeral: true });
+  const embed = new EmbedBuilder().setTitle("Request SpectralBot Developer Assistance?")
+    .setDescription("This will alert the SpectralBot developer and send them an invitation to this server. **Only continue if your server's staff have already tried and cannot resolve the issue.**")
+    .addFields(
+      { name: "Server", value: interaction.guild?.name || "Unknown", inline: true },
+      { name: "Requester", value: `${interaction.user.tag} (<@${interaction.user.id}>)`, inline: true },
+      { name: "What happens next?", value: "If confirmed, SpectralBot will mention the developer in this channel and privately send them a single-use server invitation." }
+    ).setColor(COLORS.warning).setFooter({ text: "Please confirm only when staff cannot resolve the issue." });
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId(`botdevping_confirm:${interaction.user.id}`).setLabel("Confirm request").setStyle(ButtonStyle.Danger),
+    new ButtonBuilder().setCustomId(`botdevping_cancel:${interaction.user.id}`).setLabel("Cancel").setStyle(ButtonStyle.Secondary)
+  );
+  return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+}
+
+async function handleBotDevPingButton(interaction) {
+  const [action, requesterId] = interaction.customId.split(":");
+  if (interaction.user.id !== requesterId) return interaction.reply({ content: "Only the person who started this request can confirm or cancel it.", ephemeral: true });
+  if (action === "botdevping_cancel") return interaction.update({ content: "Developer assistance request cancelled. No notification was sent.", embeds: [], components: [] });
+  const previous = botDevPingCooldowns.get(requesterId) || 0;
+  if (Date.now() - previous < 10 * 60 * 1000) return interaction.update({ content: "A developer assistance request was recently submitted. Please wait before trying again.", embeds: [], components: [] });
+  await interaction.update({ content: "Your request is being sent...", embeds: [], components: [] });
+  try {
+    const channel = interaction.channel;
+    const invite = await channel.createInvite({ maxAge: 86400, maxUses: 1, unique: true, reason: `SpectralBot developer assistance requested by ${interaction.user.tag}` });
+    const owner = await client.users.fetch(OWNER_ID);
+    await owner.send({ content: `SpectralBot developer assistance requested by ${interaction.user.tag} (${interaction.user.id}) in **${interaction.guild.name}**.\nServer ID: ${interaction.guild.id}\nChannel: #${channel.name}\nInvitation (single use, expires in 24 hours): ${invite.url}` });
+    await channel.send({ content: `<@${OWNER_ID}> A server has requested SpectralBot developer assistance. The invitation has been sent privately to the developer.`, allowedMentions: { users: [OWNER_ID] } });
+    botDevPingCooldowns.set(requesterId, Date.now());
+    await interaction.followUp({ content: `${EMOJIS.success} The developer has been notified and sent a server invitation.`, ephemeral: true });
+  } catch (error) {
+    console.error("BOTDEVPING ERROR:", error);
+    await interaction.followUp({ content: `${EMOJIS.error} I couldn't complete the escalation. Check that I can create an invite and send DMs, then contact server staff.`, ephemeral: true });
+  }
+}
+
+async function dispatchLegacySlashCommand(interaction) {
+  const name = interaction.commandName;
+  const options = interaction.options;
+  let content = `!${name}`;
+  let targetMember = null;
+  let targetChannel = null;
+  const userOption = options.getUser("user");
+  if (userOption) targetMember = options.getMember("user") || await interaction.guild.members.fetch(userOption.id).catch(() => null);
+  const channelOption = options.getChannel("channel");
+  if (channelOption) targetChannel = channelOption;
+  if (name === "announce") content += ` "${options.getString("message", true)}"`;
+  else if (name === "forceannounce" || name === "globalannounce") content += ` <#${targetChannel.id}> ${options.getString("message", true)}`;
+  else if (name === "config") {
+    const sub = options.getSubcommand();
+    content += ` ${sub}`;
+    if (sub === "flags") content += ` ${options.getString("state", true)}`;
+    if (sub === "command") content += ` ${options.getString("command", true)} ${options.getString("state", true)}`;
+  } else if (userOption) {
+    content += ` <@${userOption.id}>`;
+    if (name === "forcemute") {
+      const duration = options.getInteger("duration");
+      if (duration !== null) content += ` ${duration}`;
+      const reason = options.getString("reason");
+      if (reason) content += ` ${reason}`;
+    } else {
+      const reason = options.getString("reason");
+      if (reason) content += ` ${reason}`;
+    }
+  }
+  const fakeMessage = {
+    author: interaction.user, member: interaction.member, guild: interaction.guild,
+    channel: interaction.channel, content,
+    mentions: { members: { first: () => targetMember }, channels: { first: () => targetChannel } },
+    reply: async payload => interaction.deferred ? interaction.editReply(payload) : interaction.replied ? interaction.followUp(payload) : interaction.reply(payload)
+  };
+  await interaction.deferReply();
+  const handlers = client.listeners("messageCreate");
+  const commandHandler = handlers[handlers.length - 1];
+  await commandHandler(fakeMessage);
+}
+
 
 
 client.on(
   "interactionCreate",
   async interaction => {
+
+    if (interaction.isButton() && interaction.customId.startsWith("botdevping_")) {
+      await handleBotDevPingButton(interaction);
+      return;
+    }
 
     if (
       interaction.isButton()
@@ -3356,6 +3459,11 @@ client.on(
     ) {
       return;
     }
+
+    if (interaction.commandName === "debug") { await handleDebugCommand(interaction); return; }
+    if (interaction.commandName === "emojilist") { await handleEmojiList(interaction); return; }
+    if (interaction.commandName === "botdevping") { await handleBotDevPing(interaction); return; }
+    if (interaction.commandName !== "ping" && interaction.commandName !== "apply") { await dispatchLegacySlashCommand(interaction); return; }
 
     if (
       interaction.commandName ===
